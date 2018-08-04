@@ -1,0 +1,27 @@
+{
+  "name": "93gaurav93/laravel-json-responder",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Gaurav Deshpande",
+      "email": "93gaurav93@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "GauravD\\LaravelJsonResponder\\": "src/"
+    }
+  },
+  "minimum-stability": "dev",
+  "require": {},
+  "extra": {
+    "laravel": {
+      "providers": [
+        "GauravD\\LaravelJsonResponder\\LaravelResponderServiceProvider"
+      ],
+      "aliases": {
+          "Responder": "GauravD\\LaravelJsonResponder\\Facades\\Responder"
+      }
+    }
+  }
+}
