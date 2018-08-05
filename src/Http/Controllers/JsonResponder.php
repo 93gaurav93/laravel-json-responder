@@ -3,6 +3,7 @@
 namespace GauravD\LaravelJsonResponder\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class JsonResponder extends Controller
 {
@@ -11,26 +12,17 @@ class JsonResponder extends Controller
 
     private $headers = [];
 
-    private $data = [];
+    private $data;
+
+    private $wrapper = 'data';
     
     private $withSuccess = true;
 
     private $error = false;
 
-    private $errorMessage = '';
+    private $errorMessage;
 
-
-    /**
-     * @param mixed $data
-     *
-     * @return self
-     */
-    public function setData(array $data = [])
-    {
-        $this->data = $data;
-
-        return $this;
-    }
+    private $validator;
 
     /**
      * @param mixed $headers
@@ -44,23 +36,81 @@ class JsonResponder extends Controller
         return $this;
     }
 
+    /**
+     * @param mixed $errorMessage
+     *
+     * @return self
+     */
+    public function setErrorMessage($errorMessage = null)
+    {
+        $this->errorMessage = $errorMessage;
+        $this->error = true;
 
-    public function respond()
+        return $this;
+    }
+
+
+    public function respond($data = null)
     {
 
-        $data = [];
+        $this->data = $data;
+
+        $response = [];
 
         if (true == $this->withSuccess) {
-            $data['success'] = $this->error ? false : true;
+            $response['success'] = $this->error ? false : true;
         }
 
-        if (count($this->data)) {
-            $data['data'] = $this->data;
+        if (!empty($this->data) && !$this->error) {
+            $response['data'] = $this->data;
         }
 
-        return response($data, $this->statusCode)
+        if ($this->error) {
+            $response['data'] = $this->errorMessage ?? 'Error!';
+        }
+
+        return response($response, $this->statusCode)
             ->withHeaders($this->headers);
     }
 
 
+
+    
+
+    /**
+     * @param mixed $validator
+     *
+     * @return self
+     */
+    public function setValidator(Validator $validator)
+    {
+        $this->validator = $validator;
+        $this->error = true;
+        $this->errorMessage = ['validation' => $validator->errors()];
+
+        return $this;
+    }
+
+    /**
+     *
+     * @return self
+     */
+    public function withoutSuccess()
+    {
+        $this->withSuccess = false;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $wrapper
+     *
+     * @return self
+     */
+    public function setWrapper($wrapper = null)
+    {
+        $this->wrapper = $wrapper;
+
+        return $this;
+    }
 }
