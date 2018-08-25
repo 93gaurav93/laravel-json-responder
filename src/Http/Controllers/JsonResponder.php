@@ -3,21 +3,107 @@
 namespace GauravD\LaravelJsonResponder\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use GauravD\LaravelJsonResponder\Http\Controllers\Core\JsonResponderCore;
+use GauravD\LaravelJsonResponder\Traits\CommonErrorsTrait;
+use Illuminate\Http\Response;
 
 class JsonResponder extends Controller
 {
 
-    private $responder;
+	use CommonErrorsTrait;
+
+    private $statusCode,
+            $statusText,
+            $success,
+            $headers,
+            $data,
+            $errors,
+            $wrapper;
 
     public function __construct()
     {
-        $this->responder = new JsonResponderCore();
+        $this->setStatusCode();
+        $this->setSuccess();
+        $this->setHeaders();
+        $this->setWrapper();
+    }
+
+    public function setStatusCode(int $statusCode = 200)
+    {
+        $this->statusCode = $statusCode;
+        $this->statusText = $this->getStatusTextByCode($this->statusCode);
+        return $this;
+    }
+
+    public function setSuccess(bool $success = true)
+    {
+        $this->success = $success;
+        return $this;
+    }
+
+    public function setHeaders(array $headers = [])
+    {
+        $this->headers = $headers;
+        return $this;
+    }
+
+    public function setData($data = null)
+    {
+        $this->data = $data;
+        return $this;
+    }
+
+    public function setErrors($errors = null)
+    {
+        $this->errors = $errors;
+        $this->setSuccess(false);
+        return $this;
+    }
+
+    public function setWrapper($wrapper = 'data')
+    {
+        $this->wrapper = $wrapper;
+        return $this;
     }
 
     public function respond($data = null)
     {
-        return $this->responder->respond($data);
+
+        $this->data = $data;
+
+        $responseData = null;
+
+        if ( ! empty($this->data) && empty($this->errors) ) {
+            $responseData = $this->data;
+        }
+
+        if ( ! empty($this->errors ) ) {
+            $responseData = $this->errors;
+        }
+
+        $response['success'] = $this->success;
+        $response['status'] = $this->statusText;
+        
+        if ($this->errors) {
+        	$response['errors'] = $this->errors;
+        }
+        else {
+	        $response['data'] = $responseData;
+        }
+
+        return response($response, $this->statusCode)
+            ->withHeaders($this->headers);
+    }
+
+
+    public function getStatusTextByCode(int $statusCode)
+    {
+        $texts = Response::$statusTexts;
+
+        if ( ! array_key_exists($statusCode, $texts)) {
+            return null;
+        }
+        
+        return $texts[$statusCode];
     }
 
 }
