@@ -6,8 +6,28 @@ use Illuminate\Http\Response;
 use Illuminate\Validation\Validator;
 
 
-trait CommonErrorsTrait
+trait CommonResponsesTrait
 {
+
+	public function respondSuccess(int $statusCode = 200)
+	{
+		return
+			$this
+				->setNoData(true)
+				->setStatusCode($statusCode)
+				->respond();
+	}
+
+	public function respondFailed(int $statusCode = 200)
+	{
+		return
+			$this
+				->setNoData(true)
+				->setSuccess(false)
+				->setStatusCode($statusCode)
+				->respond();
+	}
+
 	public function respondErrors(array $errors = [], int $statusCode = 200)
 	{
 		return
@@ -43,7 +63,7 @@ trait CommonErrorsTrait
         	->respond();
     }
 
-    public function respondNotFound($message = 'Not Found')
+    public function respondNotFound($message = 'Not Found!')
     {
         return $this
         	->setStatusCode(Response::HTTP_NOT_FOUND)

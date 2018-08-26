@@ -3,13 +3,13 @@
 namespace GauravD\LaravelJsonResponder\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use GauravD\LaravelJsonResponder\Traits\CommonErrorsTrait;
+use GauravD\LaravelJsonResponder\Traits\CommonResponsesTrait;
 use Illuminate\Http\Response;
 
 class JsonResponder extends Controller
 {
 
-	use CommonErrorsTrait;
+	use CommonResponsesTrait;
 
     private $statusCode,
             $statusText,
@@ -17,7 +17,8 @@ class JsonResponder extends Controller
             $headers,
             $data,
             $errors,
-            $wrapper;
+            $wrapper,
+            $noData;
 
     public function __construct()
     {
@@ -25,6 +26,7 @@ class JsonResponder extends Controller
         $this->setSuccess();
         $this->setHeaders();
         $this->setWrapper();
+        $this->setNoData();
     }
 
     public function setStatusCode(int $statusCode = 200)
@@ -65,6 +67,12 @@ class JsonResponder extends Controller
         return $this;
     }
 
+    public function setNoData($noData = false)
+    {
+        $this->noData = $noData;
+        return $this;
+    }
+
     public function respond($data = null)
     {
 
@@ -83,11 +91,13 @@ class JsonResponder extends Controller
         $response['success'] = $this->success;
         $response['status'] = $this->statusText;
         
-        if ($this->errors) {
-        	$response['errors'] = $this->errors;
-        }
-        else {
-	        $response['data'] = $responseData;
+        if( ! $this->noData ) {
+            if ($this->errors) {
+                $response['errors'] = $this->errors;
+            }
+            else {
+                $response[$this->wrapper] = $responseData;
+            }
         }
 
         return response($response, $this->statusCode)
