@@ -122,7 +122,7 @@ Responder::respondSuccess(int $statusCode = 200);
 
 **Respond `false` success without data,**
 ``` php
-Responder::respondFailed(int $statusCode = 200);
+Responder::respondFailed(int $statusCode = 400);
 ```
 
 **Respond errors,**
@@ -145,7 +145,7 @@ Responder::respondNotFound($message = 'Not Found!');
 Responder::respondInternalError($message = 'Internal Error!');
 ```
 ``` php
-Responder::respondServiceUnavailable($message = 'Service Unavailable!'');
+Responder::respondServiceUnavailable($message = 'Service Unavailable!');
 ```
 
 **Responding validation errors,**
