@@ -23,7 +23,7 @@ return Responder::respond([
 
 Response,
 
-```
+``` json
 {
   "success": true,
   "status": "OK",
@@ -64,7 +64,7 @@ return Responder::setStatusCode(202)->respond('My message!');
 
 Response,
 
-```
+``` json
 {
   "success": true,
   "status": "Accepted",
@@ -72,7 +72,7 @@ Response,
 }
 ```
 
-**Chnage data wrapper**
+**Change data wrapper**
 
 Default : `data`
 
@@ -81,7 +81,7 @@ return Responder::setWrapper('contents')->respond(['name' => 'John']);
 ```
 
 Response,
-```
+``` json
 {
   "success": true,
   "status": "OK",
@@ -113,6 +113,72 @@ Response,
 }
 ```
 
+### Helpers
+
+**Respond success without data,**
+``` php
+Responder::respondSuccess(int $statusCode = 200);
+```
+
+**Respond `false` success without data,**
+``` php
+Responder::respondFailed(int $statusCode = 200);
+```
+
+**Respond errors,**
+``` php
+Responder::respondErrors(array $errors = [], int $statusCode = 200);
+```
+
+**Respond common errors,**
+
+``` php
+Responder::respondUnauthorizedError($message = 'Unauthorized!');
+```
+``` php
+Responder::respondForbiddenError($message = 'Forbidden!');
+```
+``` php
+Responder::respondNotFound($message = 'Not Found!');
+```
+``` php
+Responder::respondInternalError($message = 'Internal Error!');
+```
+``` php
+Responder::respondServiceUnavailable($message = 'Service Unavailable!'');
+```
+
+**Responding validation errors,**
+
+``` php
+
+use GauravD\LaravelJsonResponder\Facades\Responder;
+use Illuminate\Support\Facades\Validator;
+
+...
+
+$validator = Validator::make([], ['first_name' => 'required', 'last_name' => 'required']);
+return Responder::respondValidationErrors($validator);
+
+```
+
+Response,
+``` json
+{
+  "success": false,
+  "status": "OK",
+  "errors": {
+    "validation": {
+      "first_name": [
+        "The first name field is required."
+      ],
+      "last_name": [
+        "The last name field is required."
+      ]
+    }
+  }
+}
+```
 
 
 
