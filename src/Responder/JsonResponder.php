@@ -1,12 +1,11 @@
 <?php
 
-namespace GauravD\LaravelJsonResponder\Http\Controllers;
+namespace GauravD\LaravelJsonResponder\Responder;
 
-use App\Http\Controllers\Controller;
 use GauravD\LaravelJsonResponder\Traits\CommonResponsesTrait;
 use Illuminate\Http\Response;
 
-class JsonResponder extends Controller
+class JsonResponder
 {
 
 	use CommonResponsesTrait;

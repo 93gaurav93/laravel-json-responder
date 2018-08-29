@@ -2,7 +2,7 @@
 
 namespace GauravD\LaravelJsonResponder;
 
-use GauravD\LaravelJsonResponder\Http\Controllers\JsonResponder;
+use GauravD\LaravelJsonResponder\Responder\JsonResponder;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelResponderServiceProvider extends ServiceProvider
